@@ -1,90 +1,112 @@
-# Tech Stack Document
+# Tech Stack Document for hero-section-enhancer (Codeguide Starter Fullstack)
 
-This document explains the key technologies chosen for the **codeguide-starter** project. It’s written in everyday language so anyone—technical or not—can understand why each tool was picked and how it supports the application.
+This document explains the technology choices behind the hero-section-enhancer template in plain English. It covers why each tool was chosen and how they work together to create a modern, dynamic hero section and full-stack web application.
 
 ## 1. Frontend Technologies
-The frontend is everything the user sees and interacts with. For this project, we’ve used:
 
-- **Next.js (App Router)**
-  - A React framework that makes page routing, server-side rendering, and API routes very simple.
-  - Enhances user experience by pre-rendering pages on the server or at build time, leading to faster initial load.
-- **React 18**
-  - The underlying library for building user interfaces with reusable components.
-  - Provides a smooth, interactive experience thanks to its virtual DOM and modern hooks.
-- **TypeScript**
-  - A superset of JavaScript that adds types (labels for data).
-  - Helps catch errors early during development and makes the code easier to maintain.
-- **CSS (globals.css & theme.css)**
-  - **globals.css** applies base styles (fonts, colors, resets) across the entire app.
-  - **dashboard/theme.css** defines the look and feel specific to the dashboard area.
-  - This separation keeps styles organized and avoids accidental style conflicts.
+These are the tools we use to build the part of the app you see and interact with (the user interface).
 
-By combining these tools, we have a clear structure (Next.js folders for pages and layouts), safer code (TypeScript), and flexible styling with vanilla CSS.
+- Next.js 15 (App Router)
+  • A React framework that handles routing, server-side rendering, and static generation.
+  • Lets us decide on the server if a user is logged in, so there’s no flash of wrong content on page load.
+
+- React & TypeScript
+  • React provides reusable UI components.
+  • TypeScript adds type checking to catch errors early and make the code easier to understand.
+
+- Tailwind CSS v4
+  • A utility-first CSS framework for rapidly styling elements with simple class names.
+  • Speeds up design tweaks—spacing, colors, and layouts can be changed directly in the HTML-like code.
+
+- shadcn/ui
+  • A library of pre-built, accessible UI components (buttons, cards, dialogs).
+  • Ensures consistent look and feel across your hero section and other pages.
+
+- next-themes
+  • A simple way to add dark/light mode toggles.
+  • Automatically applies theme preferences across all pages and components.
+
+- Lucide React
+  • A collection of modern, open-source icons for use in buttons, links, and feature highlights.
 
 ## 2. Backend Technologies
-The backend handles data, user accounts, and the logic behind the scenes. Our choices here are:
 
-- **Next.js API Routes**
-  - Allows us to write server-side code (`route.ts` files) alongside our frontend in the same project.
-  - Runs on Node.js, so we can handle requests like sign-up, sign-in, and data fetching in one place.
-- **Node.js Runtime**
-  - The JavaScript environment on the server that executes our API routes.
-- **bcrypt** (npm package)
-  - A library for hashing passwords securely before storing them.
-  - Ensures that even if someone got access to our data, raw passwords aren’t visible.
-- **(Optional) NextAuth.js or JWT**
-  - While this starter kit shows a custom authentication flow, it can easily integrate services like NextAuth.js for email-based login or JWT (JSON Web Tokens) for stateless sessions.
+These tools power the logic, data storage, and server operations behind the scenes.
 
-These components work together to receive user credentials, verify or store them securely, manage sessions or tokens, and deliver protected data back to the frontend.
+- Better Auth
+  • A ready-made authentication library for sign-up, sign-in, and session management.
+  • Integrates seamlessly with Next.js server components to protect routes and personalize content.
+
+- PostgreSQL
+  • A reliable, open-source relational database for storing user accounts and application data.
+
+- Drizzle ORM
+  • A TypeScript-friendly library that helps you write safe, easy-to-read database queries.
+  • Keeps your database access code consistent and maintainable.
 
 ## 3. Infrastructure and Deployment
-Infrastructure covers where and how we host the app, as well as how changes get delivered:
 
-- **Git & GitHub**
-  - Version control system (Git) and remote hosting (GitHub) keep track of all code changes and allow team collaboration.
-- **Vercel (or Netlify)**
-  - A popular hosting service optimized for Next.js, with one-click deployments and global content delivery.
-  - Automatically rebuilds and deploys the site whenever code is pushed to the main branch.
-- **GitHub Actions (CI/CD)**
-  - Automates tasks like linting (ESLint), formatting (Prettier), and running any tests you add.
-  - Ensures that only clean, tested code goes live.
+This section covers where the app runs and how updates get deployed.
 
-Together, these tools provide a reliable, scalable setup where every code change is tested and deployed quickly, with minimal manual work.
+- Docker & docker-compose
+  • Define consistent local environments for backend, database, and frontend.
+  • Ensures every team member runs the same setup without manual configuration.
+
+- Vercel
+  • A cloud platform optimized for Next.js projects.
+  • Handles build, deploy, and automatic global CDN distribution in seconds.
+
+- Git & GitHub
+  • Version control to track code changes and collaborate with others.
+  • Branching workflows keep feature work isolated until it’s ready to merge.
+
+- (Optional) GitHub Actions
+  • Automate testing and deployment steps whenever you push code.
+  • Helps catch errors earlier and ensures a smooth delivery process.
 
 ## 4. Third-Party Integrations
-While this starter kit is minimal by design, it already includes or can easily add:
 
-- **bcrypt**
-  - For secure password hashing (included as an npm dependency).
-- **NextAuth.js** (optional)
-  - A full-featured authentication library supporting email/password, OAuth, and more.
-- **Sentry or LogRocket** (optional)
-  - For real-time error tracking and performance monitoring in production.
+These external libraries and services add key features without reinventing the wheel.
 
-These integrations help extend the app’s capabilities without building every feature from scratch.
+- Better Auth (Authentication)
+  • Manages user sessions, password hashing, and secure cookies.
+
+- shadcn/ui (UI Components)
+  • Provides a set of accessible, themed components that match the project’s design system.
+
+- Drizzle ORM (Database Access)
+  • Acts as the bridge between your TypeScript code and the PostgreSQL database.
+
+- next-themes (Theming)
+  • Handles switching and persisting dark or light mode preferences.
+
+- Lucide React (Icons)
+  • Supplies a variety of scalable icons to enhance calls-to-action.
 
 ## 5. Security and Performance Considerations
-We’ve baked in several measures to keep users safe and the app running smoothly:
 
-Security:
-- Passwords are never stored in plain text—bcrypt hashes them with a random salt.
-- API routes can implement CSRF protection and input validation to block malicious requests.
-- Session tokens or cookies are marked secure and HttpOnly to prevent theft via JavaScript.
+How we keep data safe and make the app run smoothly.
 
-Performance:
-- Server-side rendering (SSR) and static site generation (SSG) in Next.js deliver pages faster.
-- Code splitting and lazy-loaded components ensure users only download what they need.
-- Global CSS and theme files are small and cached by the browser for quick repeat visits.
+- Secure Authentication
+  • Better Auth uses industry-standard practices (encrypted passwords, secure cookies).
+  • Server components check sessions before rendering protected content.
 
-These strategies work together to give users a fast, secure experience every time.
+- Data Protection
+  • PostgreSQL stores user data safely on the server side—no sensitive info leaks to the browser.
+  • Drizzle ORM prevents SQL injection by construction.
+
+- Performance Optimizations
+  • Server-side rendering (SSR) in Next.js avoids flashes of unstyled or unauthorized content.
+  • Tailwind CSS purges unused styles automatically in production.
+  • Next.js built-in image optimization and code splitting reduce load times.
 
 ## 6. Conclusion and Overall Tech Stack Summary
-In building **codeguide-starter**, we chose technologies that:
 
-- Align with modern web standards (Next.js, React, TypeScript).
-- Provide a clear, file-based project structure for rapid onboarding.
-- Offer built-in support for server-side rendering, API routes, and static assets.
-- Emphasize security through password hashing, session management, and safe defaults.
-- Enable easy scaling and future enhancements via modular code and optional integrations.
+By combining these technologies, the hero-section-enhancer template delivers:
 
-This stack strikes a balance between simplicity for newcomers and flexibility for experienced teams. It accelerates development of a secure authentication flow and a polished dashboard, while leaving room to plug in databases, test suites, and advanced features as the project grows.
+- A **dynamic hero section** that adapts for logged-out vs. logged-in users without extra boilerplate.
+- A **consistent design system** using Tailwind CSS and shadcn/ui to build and iterate on UI fast.
+- **Secure authentication** and **type-safe data access** with Better Auth and Drizzle ORM.
+- A **containerized development environment** for reliable local testing (Docker) and a **one-click deploy** to Vercel.
+
+This stack strikes a balance between developer productivity, performance, and security. It’s ready for you to build a personalized, data-driven hero section and expand into a full-featured web application with confidence.
