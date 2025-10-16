@@ -1,180 +1,153 @@
-# Frontend Guideline Document
+# Frontend Guideline Document for **hero-section-enhancer** (Codeguide Starter Fullstack)
 
-This document explains, in simple terms, how the frontend of the `codeguide-starter` project is structured, styled, and built. Anyone—technical or not—can read this and understand which tools are used, how components fit together, and what practices keep the app fast, reliable, and easy to maintain.
-
----
+This document outlines the frontend architecture, design principles, styling, component structure, state management, routing, performance optimizations, testing strategies, and other key details for the **hero-section-enhancer** project. It is written in plain language so anyone can understand and use it as a roadmap for building and maintaining the frontend.
 
 ## 1. Frontend Architecture
 
-**Core Frameworks and Libraries**
-- **Next.js (App Router)**: A React-based framework that provides file-based routing, server-side rendering (SSR), static site generation (SSG), and built-in API endpoints all in one project.
-- **React 18**: The library for building user interfaces using components and hooks.
-- **TypeScript**: A superset of JavaScript that adds static types, helping catch errors early and making the code easier to understand and refactor.
+### 1.1 Overview
+- **Framework**: Next.js 15 (App Router) with built-in server components.  
+- **Language**: TypeScript for type safety and maintainability.  
+- **UI Library**: `shadcn/ui` (New York style) for accessible, pre-styled React components.  
+- **Styling**: Tailwind CSS v4 (utility-first) plus `next-themes` for theming.  
+- **Authentication**: Better Auth handles sign-up, sign-in, and session checks on the server.  
+- **Database & ORM**: PostgreSQL accessed via Drizzle ORM for type-safe data fetching.  
+- **Icons**: Lucide React.  
+- **Containerization**: Docker + docker-compose for consistent dev environments.  
+- **Deployment**: Optimized for Vercel out of the box.
 
-**How It’s Organized**
-- The `app/` folder holds all pages and layouts. Each URL path corresponds to a folder:
-  - `/app/sign-in` and `/app/sign-up` for authentication pages.
-  - `/app/dashboard` for the protected user area.
-  - API routes live under `/app/api/auth/route.ts`.
-- Each route folder contains:
-  - `page.tsx` (the UI for that page)
-  - `layout.tsx` (wrapping structure, like headers or sidebars)
-  - Styles (e.g., `theme.css` in the dashboard).
-
-**Why This Works**
-- **Scalability**: Adding new pages or features means creating new folders with their own layouts and pages. You don’t have to touch a central router file.
-- **Maintainability**: Code is separated by feature. Backend logic (API routes) lives alongside the frontend code for that feature, reducing context-switching.
-- **Performance**: Next.js pre-renders pages where possible and splits code by route, so users download only what’s needed.
-
----
+### 1.2 Scalability, Maintainability, Performance
+- **Server Components** let us fetch data (like user sessions) on the server and deliver HTML with no client flash.  
+- **Component-based design** keeps UI pieces small, reusable, and easy to test.  
+- **TypeScript** reduces runtime errors and makes refactoring safe.  
+- **Tailwind CSS** utility classes speed up styling and avoid bloated stylesheets.  
+- **Docker** ensures everyone develops with the same environment, preventing "works on my machine" issues.  
+- **Next.js built-in optimizations** (image resizing, code splitting) improve load times.
 
 ## 2. Design Principles
 
-1. **Usability**: Forms give instant feedback. Buttons and links are clearly labeled.
-2. **Accessibility**: Semantic HTML, proper color contrast, and focus outlines ensure people using screen readers or keyboards can navigate easily.
-3. **Responsiveness**: Layouts adapt from mobile (320px) up to large desktop screens. CSS media queries ensure content resizes and stacks neatly.
-4. **Consistency**: Shared global layout and styling mean pages look and feel like part of the same app.
+### 2.1 Key Principles
+1. **Usability**: Interfaces must be intuitive—buttons and links are clearly labeled and easy to find.  
+2. **Accessibility**: All UI components (from `shadcn/ui`) follow WAI-ARIA guidelines. Keyboard navigation, focus states, and screen reader labels are built in.  
+3. **Responsiveness**: Layouts adapt seamlessly from mobile to desktop using Tailwind’s responsive utilities.  
+4. **Consistency**: A unified look and feel through theming and shared component library.  
+5. **Performance**: Minimize load times with server rendering, lazy loading, and optimized assets.
 
-**How We Apply Them**
-- Form fields use `aria-*` attributes and visible labels.
-- Error messages appear inline under inputs.
-- Navigation elements (header, sidebar) appear in every layout.
-- Breakpoints at 480px, 768px, and 1024px guide responsive adjustments.
-
----
+### 2.2 Applying Principles in the Hero Section
+- **Clear calls-to-action**: Primary buttons stand out with consistent color and padding.  
+- **Accessible text sizes**: Headlines and paragraphs follow a scale that is legible on all devices.  
+- **Responsive layout**: Hero content stacks vertically on small screens and lays out side-by-side on larger viewports.  
+- **Conditional content**: Personalized greetings or buttons appear based on user authentication state.
 
 ## 3. Styling and Theming
 
-**Approach**
-- **Global Styles (`globals.css`)**: Resets, base typography, and common utility classes.
-- **Section Styles (`theme.css` in dashboard)**: Styles specific to the dashboard area (colors, layouts).
-- We follow a **BEM-inspired naming** for classes when writing new CSS to avoid conflicts and keep selectors clear.
+### 3.1 Styling Approach
+- **Utility-First**: Tailwind CSS v4 for rapid iteration—no custom CSS files unless absolutely necessary.  
+- **Class Merging**: Use the `cn` helper from `lib/utils.ts` to compose class names and handle conditional styles.  
+- **No BEM/SMACSS**: Utilities replace traditional naming conventions.
 
-**Visual Style**: Modern flat design with subtle shadows for depth. Clear spacing and large touch targets on mobile.
+### 3.2 Theming
+- **Dark/Light Mode**: Managed by `next-themes`. Wrap the app in a `ThemeProvider`, toggle modes with a simple switch.  
+- **Global tokens**: Colors, fonts, and spacing are defined via Tailwind’s theme configuration (`tailwind.config.js`).
 
-**Color Palette**
-- **Primary Blue**: #1E90FF  (buttons, highlights)
-- **Secondary Navy**: #2C3E50  (header, sidebar background)
-- **Accent Cyan**: #00CEC9  (links, hover states)
-- **Neutral Light**: #F8F9FA  (page backgrounds)
-- **Neutral Dark**: #2D3436  (text, icons)
-
-**Font**
-- **Inter** (sans-serif): Clean, modern, highly legible on screens. Fallback to system fonts like `-apple-system, BlinkMacSystemFont, sans-serif`.
-
-**Theming**
-- To keep a consistent look, all colors and font sizes are defined in CSS variables in `globals.css`:
-  ```css
-  :root {
-    --color-primary: #1E90FF;
-    --color-secondary: #2C3E50;
-    --color-accent: #00CEC9;
-    --color-bg: #F8F9FA;
-    --color-text: #2D3436;
-    --font-family: 'Inter', sans-serif;
-  }
-  ```
-- Components consume these variables for backgrounds, borders, and text.
-
----
+### 3.3 Visual Style and Palette
+- **Design Style**: Modern flat design with subtle depth (e.g., shadow on cards).  
+- **Color Palette**:  
+  - Primary Blue: `#3B82F6` (buttons, links)  
+  - Secondary Indigo: `#6366F1` (accents, hover states)  
+  - Accent Teal: `#14B8A6` (highlights, success states)  
+  - Background Light: `#F9FAFB`  
+  - Background Dark: `#1F2937`  
+  - Text Dark: `#111827`  
+  - Text Light: `#F3F4F6`  
+- **Typography**:  
+  - Primary Font: Inter, system-ui, sans-serif.  
+  - Scale:  
+    • h1: 2.25rem (36px)  
+    • h2: 1.875rem (30px)  
+    • h3: 1.5rem (24px)  
+    • body: 1rem (16px)  
+    • small: 0.875rem (14px)
 
 ## 4. Component Structure
 
-**File Layout**
-- `/app` (top-level folder)
-  - `layout.tsx`: Global wrapper (nav, footer).
-  - `page.tsx`: Landing or redirect logic.
-  - `/sign-in`, `/sign-up`, `/dashboard`, `/api/auth`
-    - Each has its own `layout.tsx` and `page.tsx`.
-- **Common Components**: Put reusable UI pieces (buttons, inputs, cards) into a `/components` folder at the project root.
+### 4.1 Organization
+- `/app` directory holds routes and server components.  
+- `/components` holds reusable UI pieces (e.g., `Hero`, `HeroAuthButtons`, `Button`, `Card`).  
+- `/lib` holds utilities and authentication helpers (`lib/auth.ts`, `lib/utils.ts`).  
+- `/components/ui` is auto-generated UI components from `shadcn/ui`.
 
-**Reusability & Encapsulation**
-- Components are self-contained: each has its own styles (class names scoped to BEM) and behavior.
-- Shared logic (e.g., API calls) lives in `/lib` or `/hooks` so pages import only what they need.
+### 4.2 Reusability
+- Break down complex UIs into small parts: `HeroHeadline`, `HeroCTA`, `FeatureList`, `LoggedInHero`, `LoggedOutHero`.  
+- Each component lives in its own folder with `[name].tsx` and optional `[name].test.tsx`.
 
-**Benefits**
-- **Easier Maintenance**: Fix a bug in one button component, and it updates everywhere.
-- **Better Team Collaboration**: Developers can own specific components or pages without stepping on each other’s code.
-
----
+### 4.3 Benefits
+- **Maintainability**: Changing one piece doesn’t risk breaking others.  
+- **Clarity**: New developers can quickly find and understand each piece.  
+- **Testability**: Small units are easier to write targeted tests for.
 
 ## 5. State Management
 
-**Current Approach**
-- **Local State**: React `useState` and `useEffect` for form values, loading flags, and error messages.
-- **Server State**: Fetch data (e.g., dashboard JSON) directly in page components or using React Server Components.
+### 5.1 Server vs. Client State
+- **Server State**: User session and data come from the server via Next.js server components.  
+- **Client State**: Local UI interactions (e.g., open/close modals) use React’s `useState` or `useReducer`.
 
-**Sharing State**
-- **React Context**: A simple auth context (`AuthContext`) holds the user’s session info, login/logout methods, and makes it available to any component.
-  - Located in `/context/AuthContext.tsx`.
-
-**Future Growth**
-- If complexity grows (deeply nested data, multiple user roles), consider:
-  - **Redux Toolkit** or **Zustand** for centralized state.
-  - Query libraries like **React Query** or **SWR** for caching and re-fetch logic.
-
----
+### 5.2 Global State
+- **Auth Context**: Optionally wrap part of the UI in a React Context to share user info on the client.  
+- **Caching**: For data-driven hero content, consider SWR or React Query to cache and revalidate client-side fetched data.
 
 ## 6. Routing and Navigation
 
-**Routing Library**
-- Built into **Next.js App Router**. Each folder under `/app` becomes a route automatically.
-- Layouts (`layout.tsx`) and pages (`page.tsx`) are colocated for that route.
+### 6.1 App Router
+- **File-based routing** in `/app`.  
+- **Server Components** by default; prefix client components with `'use client'` when needed.
 
-**Protected Pages**
-- The dashboard’s `layout.tsx` checks for a valid session (via cookie or context). If missing, it issues a server-side redirect to `/sign-in`.
+### 6.2 Navigating Between Pages
+- Use Next.js `<Link>` component for client-side transitions.  
+- Protect routes by checking session in server components; redirect unauthenticated users to `/sign-in`.
 
-**Navigation Structure**
-- **Header**: Present in global layout with the app logo and conditional Sign In/Sign Out links.
-- **Sidebar**: Included in `dashboard/layout.tsx` with links to dashboard sections (expandable in future).
-
----
+### 6.3 Hero Section Flow
+1. User visits `/`  
+2. Server component in `app/page.tsx` calls helper from `lib/auth.ts`.  
+3. Based on session, render `LoggedInHero` or `LoggedOutHero`.
 
 ## 7. Performance Optimization
 
-1. **Code Splitting**: Next.js automatically breaks code by route. Users only load JS needed for the current page.
-2. **Lazy Loading**: For large components (charts, maps), wrap with `next/dynamic` to load them only when needed.
-3. **Image Optimization**: Use Next.js `<Image>` component to serve responsive, compressed images.
-4. **Caching**:
-   - Static assets (CSS, fonts) use long cache headers.
-   - API responses can be cached or ISR (Incremental Static Regeneration) applied.
-5. **Minification & Compression**: Next.js production builds automatically minify JS and CSS, and enable Brotli/Gzip on the CDN.
-
-These steps ensure fast page loads and smooth interactions.
-
----
+- **Server-Side Rendering (SSR)**: Hero content is rendered on the server, reducing layout shifts.  
+- **Code Splitting**: Next.js splits each route automatically; use dynamic imports (`next/dynamic`) for heavy components.  
+- **Lazy Loading**: Images via `<Image>` component with `loading="lazy"`.  
+- **Asset Compression**: Enable Brotli/Gzip via Vercel or custom server.  
+- **CDN Caching**: Static assets served from a CDN by default on Vercel.
 
 ## 8. Testing and Quality Assurance
 
-**Unit Tests**
-- **Jest** + **React Testing Library** for components and utility functions.
-- Example: test that the Sign In form shows an error message when fields are empty.
+### 8.1 Unit Tests
+- **Framework**: Jest with `ts-jest`.  
+- **Utilities**: React Testing Library for component rendering and interaction.
 
-**Integration Tests**
-- Combine multiple components and hooks; test API calls with **msw** (Mock Service Worker).
+### 8.2 Integration Tests
+- Test server-client interactions (e.g., hero switches based on fake sessions).  
+- Use Jest + Next.js testing utilities or MSW (Mock Service Worker) for API mocking.
 
-**End-to-End (E2E) Tests**
-- **Cypress** or **Playwright** to simulate real user flows: signing up, logging in, and viewing the dashboard.
+### 8.3 End-to-End Tests
+- **Tool**: Cypress or Playwright.  
+- **Scenarios**:  
+  - Guest visits homepage → sees “Sign Up” button.  
+  - Authenticated user visits homepage → sees personalized greeting and “Go to Dashboard.”
 
-**Linting & Formatting**
-- **ESLint** enforces code style and catches common bugs.
-- **Prettier** applies consistent formatting.
-- **Git Hooks** (via Husky) run linting/tests before each commit.
-
-**Continuous Integration (CI)**
-- **GitHub Actions** runs tests and lint on each pull request, preventing regressions.
-
----
+### 8.4 Linting & Formatting
+- **ESLint** with recommended React, Next.js, and TypeScript rules.  
+- **Prettier** for code formatting.  
+- **Pre-commit hooks** via Husky to run `lint-staged` on changed files.
 
 ## 9. Conclusion and Overall Frontend Summary
 
-The `codeguide-starter` frontend is built on modern, well-established tools—Next.js, React, and TypeScript—and follows clear principles around usability, accessibility, and maintainability. Its file-based structure, component-driven approach, and CSS-variable theming keep things organized and consistent.
+This frontend setup combines **Next.js 15**, **TypeScript**, **Tailwind CSS**, and **shadcn/ui** to create a robust, scalable, and maintainable foundation. Key highlights include:
 
-Key takeaways:
-- **Scalable Structure**: Add new features by creating new folders under `app/` without touching a central router.
-- **Component Reuse**: Shared UI pieces live in one place, making updates quick and error-free.
-- **Simple Styling**: Global and section-specific CSS, underpinned by CSS variables, ensures a unified look.
-- **Smooth Performance**: Next.js automatic optimizations plus best practices like lazy loading and caching.
-- **Quality Assurance**: A testing plan that covers unit, integration, and E2E scenarios, enforced by CI.
+- **Server-first approach** with Next.js App Router and Server Components for secure, fast rendering.  
+- **Dynamic hero section** powered by Better Auth, allowing personalized experiences out of the box.  
+- **Utility-first styling** plus theming for consistent, responsive, and accessible design.  
+- **Modular components** and clear directory structure for ease of development and testing.  
+- **Performance optimizations** baked in via lazy loading, code splitting, and Vercel integration.  
+- **Comprehensive testing** strategy that covers unit, integration, and end-to-end scenarios.
 
-With these guidelines, any developer coming into the project can understand how the pieces fit together, how to follow existing patterns, and how to keep the app fast, reliable, and easy to grow.
+By following these guidelines, developers can quickly build, maintain, and extend the hero section (and the rest of the application) while ensuring a high-quality user experience that adapts to both anonymous and authenticated visitors.
